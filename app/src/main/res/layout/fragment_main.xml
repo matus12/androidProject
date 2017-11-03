@@ -3,31 +3,18 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/listview_movies"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMovies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="259dp"
-        android:layout_height="wrap_content"
-        android:text="Movie 3"
-        android:textAlignment="viewEnd"/>
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:text="Movie 2"
-        android:textAlignment="textEnd"/>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="77dp"
-        android:layout_height="wrap_content"
-        android:text="Movie1"
-        android:textAlignment="viewStart"/>
+        />
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_movies_available"
+        />
 
 </FrameLayout>
