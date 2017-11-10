@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity
 
             if(savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_detail_container, new DetailFragment());
+                        .replace(R.id.movie_detail_container, new DetailFragment())
+                        .commit();
             }
         } else {
             mTwoPane = false;
