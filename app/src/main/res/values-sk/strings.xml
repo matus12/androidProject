@@ -3,4 +3,5 @@
     <string name="app_name">AndroidApp</string>
     <string name="hello_blank_fragment">Ahoj prazdny fragment</string>
     <string name="no_movies_available">Nie su k dispozicii ziadne filmy</string>
+    <string name="movie_image">movie_image</string>
 </resources>

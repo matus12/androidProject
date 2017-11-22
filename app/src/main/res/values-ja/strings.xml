@@ -3,4 +3,5 @@
     <string name="app_name">AndroidApp</string>
     <string name="hello_blank_fragment">ハローブランクの断片\n</string>
     <string name="no_movies_available">利用可能な映画はありません:(</string>
+    <string name="movie_image">movie_image</string>
 </resources>

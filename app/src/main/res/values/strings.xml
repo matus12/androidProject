@@ -7,4 +7,5 @@
     <string name="no_movies_available">No movies available :(</string>
     <string name="star_image" translatable="false">star_image</string>
     <string name="_7_8" translatable="false">7.8</string>
+    <string name="movie_image">movie_image</string>
 </resources>
