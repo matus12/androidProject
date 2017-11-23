@@ -10,10 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-/**
- * Created by matus on 10/19/2017.
- */
-
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
     private static final String SELECTED_KEY = "selected_position";
@@ -73,6 +69,6 @@ public class MainFragment extends Fragment {
     }
 
     public interface OnMovieSelectListener {
-        void onMovieSelect(Movie movie);
+        void onMovieSelect(MovieInfo movie);
     }
 }

@@ -1,6 +1,5 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;

@@ -4,10 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by matus on 10/19/2017.
- */
-
 public class MovieDetailActivity extends AppCompatActivity{
     public static final String EXTRA_MOVIE = "extra_movie";
 
@@ -17,7 +13,7 @@ public class MovieDetailActivity extends AppCompatActivity{
         setContentView(R.layout.activity_detail);
 
         if(savedInstanceState == null){
-            Movie movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+            MovieInfo movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
             FragmentManager fm = getSupportFragmentManager();
             DetailFragment fragment = (DetailFragment) fm.findFragmentById(R.id.movie_detail_container);
 

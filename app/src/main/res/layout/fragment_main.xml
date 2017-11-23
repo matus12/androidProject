@@ -2,20 +2,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-    android:background="#444444">
+             android:background="#444444">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvMovies"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
     <TextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
         android:text="@string/no_movies_available"
+        android:visibility="gone"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMovies"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
         />
 
 </FrameLayout>

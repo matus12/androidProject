@@ -11,39 +11,38 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
-/**
- * Created by matus on 11/2/2017.
- */
+import java.util.ArrayList;
+import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView titleTextView;
         public ImageView mImageView;
-        private TextView numberOfStarsView;
-        private Context context;
         private boolean mTwoPane;
 
-        public ViewHolder(Context context, View itemView, boolean twoPane){
+        public ViewHolder(Context context, View itemView, int viewType, boolean twoPane) {
             super(itemView);
 
-            titleTextView = (TextView) itemView.findViewById(R.id.movies_name);
-            mImageView = (ImageView) itemView.findViewById(R.id.imageView);
-            numberOfStarsView = (TextView) itemView.findViewById(R.id.numberOfStars);
-            this.context = context;
-            mTwoPane = twoPane;
-            itemView.setOnClickListener(this);
+            if (viewType == TYPE_MOVIE) {
+                titleTextView = (TextView) itemView.findViewById(R.id.movies_name);
+                mImageView = (ImageView) itemView.findViewById(R.id.imageView);
+                mTwoPane = twoPane;
+                itemView.setOnClickListener(this);
+            } else {
+                titleTextView = (TextView) itemView.findViewById(R.id.textView);
+            }
         }
 
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            if(position != RecyclerView.NO_POSITION){
-                Movie movie = mMovies.get(position);
+            if (position != RecyclerView.NO_POSITION) {
+                MovieInfo movie = mMovies.get(position);
 
                 if (mTwoPane) {
-                    FragmentManager fm = ((FragmentActivity)mContext).getSupportFragmentManager();
+                    FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
 
                     DetailFragment fragment = DetailFragment.newInstance(movie);
                     fm.beginTransaction()
@@ -59,56 +58,80 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         }
     }
 
-    private List<Movie> mMovies;
+    private List<MovieInfo> mMovies = new ArrayList<>();
     private Context mContext;
+    private int mSectionSize;
     private boolean mTwoPane;
+    private static final int TYPE_MOVIE = 0;
+    private static final int TYPE_HEADER = 1;
 
-    public MoviesAdapter(Context context, List<Movie> movies, boolean twoPane) {
+    public MoviesAdapter(Context context, List<MovieInfo> movies, int sectionSize, boolean twoPane) {
         mMovies = movies;
         mContext = context;
         mTwoPane = twoPane;
+        mSectionSize = sectionSize;
     }
 
-    private Context getContext(){
+    private Context getContext() {
         return mContext;
     }
+
     @Override
     public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
+        ViewHolder viewHolder;
 
-        View movieView = inflater.inflate(R.layout.item_movie, parent, false);
-        ViewHolder viewHolder = new ViewHolder(mContext, movieView, mTwoPane);
+        if (viewType == TYPE_HEADER) {
+            View headerView = inflater.inflate(R.layout.header, parent, false);
+            viewHolder = new ViewHolder(mContext, headerView, TYPE_HEADER, mTwoPane);
+        } else {
+            View movieView = inflater.inflate(R.layout.item_movie, parent, false);
+            viewHolder = new ViewHolder(mContext, movieView, TYPE_MOVIE, mTwoPane);
+        }
+
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(MoviesAdapter.ViewHolder holder, int position) {
-        Movie movie = mMovies.get(position);
+        if (getItemViewType(position) == TYPE_MOVIE) {
+            MovieInfo movie = mMovies.get(position);
 
-        TextView textView = holder.titleTextView;
-        textView.setText(movie.getTitle());
-        ImageView imageView = holder.mImageView;
-        TextView starsText = holder.numberOfStarsView;
-        switch (movie.getTitle()){
-            case "Blade Runner 2049":
-                imageView.setImageResource(R.drawable.bladerunner);
-                starsText.setText("7.5");
-                break;
-            case "It":
-                imageView.setImageResource(R.drawable.it);
-                starsText.setText("7.3");
-                break;
-            case "Thor: Ragnarok":
-                imageView.setImageResource(R.drawable.thor);
-                starsText.setText("7.5");
-                break;
+            TextView textView = holder.titleTextView;
+            textView.setText(movie.getOriginal_title());
+            ImageView imageView = holder.mImageView;
+            if (movie.getPoster_path() != null) {
+                Picasso.with(mContext).load("https://image.tmdb.org/t/p/w500/"
+                        + movie.getPoster_path()).into(imageView);
+            } else {
+                Picasso.with(mContext)
+                        .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
+                                "movie-poster-coming-soon_2_orig.png")
+                        .into(imageView);
+            }
+        } else if (position == 0) {
+            TextView textView = holder.titleTextView;
+            textView.setText(R.string.comingSoon);
+        } else {
+            TextView textView = holder.titleTextView;
+            textView.setText(R.string.inCinemas);
         }
-
     }
 
     @Override
     public int getItemCount() {
+        if (mMovies == null) {
+            return 0;
+        }
         return mMovies.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0 || position == mSectionSize) {
+            return TYPE_HEADER;
+        }
+        return TYPE_MOVIE;
     }
 }

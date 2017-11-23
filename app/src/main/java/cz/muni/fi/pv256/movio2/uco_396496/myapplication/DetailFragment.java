@@ -12,19 +12,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by matus on 10/19/2017.
- */
-
 public class DetailFragment extends Fragment {
 
     public static final String TAG = DetailFragment.class.getSimpleName();
     private static final String ARGS_MOVIE = "args_movie";
 
     private Context mContext;
-    private Movie mMovie;
+    private MovieInfo mMovie;
 
-    public static DetailFragment newInstance(Movie movie) {
+    public static DetailFragment newInstance(MovieInfo movie) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARGS_MOVIE, movie);
@@ -52,9 +48,9 @@ public class DetailFragment extends Fragment {
         ImageView coverIv = (ImageView) view.findViewById(R.id.detail_icon);
 
         if (mMovie != null) {
-            titleTv.setText(mMovie.getTitle());
-            titleLowTv.setText(mMovie.getCoverPath());
-            String bla = mMovie.getTitle();
+            titleTv.setText(mMovie.getOriginal_title());
+            titleLowTv.setText(mMovie.getOverview());
+
             Log.d("MOVIE", "MOVIE NOT NULL");
         } else {
             Log.d("MOVIE", "MOVIE NULL");
