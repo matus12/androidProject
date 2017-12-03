@@ -1,6 +1,9 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,8 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -21,7 +22,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
 
 public class MainActivity extends AppCompatActivity
         implements MainFragment.OnMovieSelectListener {
@@ -38,30 +40,17 @@ public class MainActivity extends AppCompatActivity
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
 
-        DownloadDataTask downloadTask = new DownloadDataTask(MainActivity.this);
-        downloadTask.execute(true);
-        DownloadDataTask downloadTask2 = new DownloadDataTask(MainActivity.this);
-        downloadTask2.execute(false);
+        Intent intent = new Intent(this, DownloadService.class);
+        startService(intent);
+
+        IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        ResponseReceiver responseReceiver = new ResponseReceiver(this);
+        registerReceiver(responseReceiver, filter);
     }
 
-    public void onTaskFinished() {
-        Gson gson = new GsonBuilder().create();
-        if (Data.getInstance().getData2() == null) {
-        }
-        MoviesList list = gson.fromJson(Data.getInstance().getData(), MoviesList.class);
-        MoviesList list2 = gson.fromJson(Data.getInstance().getData2(), MoviesList.class);
-        if (list != null) {
-            Data.getInstance().setMovies(list.getResults());
-        }
-        if (list2 != null) {
-            Data.getInstance().setMoviesInTheaters(list2.getResults());
-        }
-
-        List<MovieInfo> movieList = new ArrayList<>(Data.getInstance().getMovies());
-        movieList.addAll(Data.getInstance().getMoviesInTheaters());
-
-        MoviesAdapter adapter = new MoviesAdapter(this, movieList, Data.getInstance()
-                .getMovies().size(), mTwoPane);
+    public void setMoviesView(ArrayList<MovieInfo> movieList) {
+        MoviesAdapter adapter = new MoviesAdapter(this, movieList, movieList.size(), mTwoPane);
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
 
@@ -77,6 +66,11 @@ public class MainActivity extends AppCompatActivity
             mTwoPane = false;
             getSupportActionBar().setElevation(0f);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -96,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private static class DownloadDataTask extends AsyncTask<Boolean, Integer, Integer> {
+    /*private static class DownloadDataTask extends AsyncTask<Boolean, Integer, Integer> {
         private boolean secondTaskFinished = false;
 
         private final WeakReference<MainActivity> mActivityWeakReference;
@@ -177,16 +171,22 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
+    }*/
+
+    public class ResponseReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP = "MESSAGE_PROCESSED";
+        private MainActivity mMainActivity;
+
+        public ResponseReceiver(MainActivity activity) {
+            mMainActivity = activity;
+        }
 
         @Override
-        protected void onPostExecute(Integer result) {
-            MainActivity activity = mActivityWeakReference.get();
-            if (activity == null) {
-                return;
-            }
-            if (secondTaskFinished) {
-                activity.onTaskFinished();
-            }
+        public void onReceive(final Context context, Intent intent) {
+            MoviesList movieList = intent.getParcelableExtra("movies");
+            ArrayList<MovieInfo> movies = movieList.getResults();
+
+            mMainActivity.setMoviesView(movies);
         }
     }
 }
