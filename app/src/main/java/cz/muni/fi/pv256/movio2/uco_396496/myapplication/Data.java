@@ -1,32 +1,33 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
-import java.util.ArrayList;
+import com.squareup.picasso.RequestCreator;
+
+import java.util.List;
 
 public class Data {
     private static Data instance;
 
-    public String getData() {
+    public List<RequestCreator> getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(List<RequestCreator> data) {
         this.data = data;
     }
 
-    private String data;
+    private List<RequestCreator> data;
 
-    public String getData2() {
-        return data2;
+    public RequestCreator getDefaultCreator() {
+        return defaultCreator;
     }
 
-    public void setData2(String data2) {
-        this.data2 = data2;
+    public void setDefaultCreator(RequestCreator defaultCreator) {
+        this.defaultCreator = defaultCreator;
     }
 
-    private String data2;
+    private RequestCreator defaultCreator;
 
-    private Data() {
-    }
+    private Data() {}
 
     public static Data getInstance() {
         if (instance == null) {
@@ -35,23 +36,4 @@ public class Data {
         return instance;
     }
 
-    public ArrayList<MovieInfo> getMovies() {
-        return movies;
-    }
-
-    public void setMovies(ArrayList<MovieInfo> movies) {
-        this.movies = movies;
-    }
-
-    private ArrayList<MovieInfo> movies;
-
-    public ArrayList<MovieInfo> getMoviesInTheaters() {
-        return moviesInTheaters;
-    }
-
-    public void setMoviesInTheaters(ArrayList<MovieInfo> moviesInTheaters) {
-        this.moviesInTheaters = moviesInTheaters;
-    }
-
-    private ArrayList<MovieInfo> moviesInTheaters;
 }

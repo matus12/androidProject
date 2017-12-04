@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +62,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private Context mContext;
     private int mSectionSize;
     private boolean mTwoPane;
+    private List<RequestCreator> mRequestCreators;
+    private RequestCreator defaultCreator;
     private static final int TYPE_MOVIE = 0;
     private static final int TYPE_HEADER = 1;
 
@@ -70,6 +72,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         mContext = context;
         mTwoPane = twoPane;
         mSectionSize = sectionSize;
+        mRequestCreators = Data.getInstance().getData();
+        defaultCreator = Data.getInstance().getDefaultCreator();
     }
 
     private Context getContext() {
@@ -102,13 +106,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             textView.setText(movie.getOriginal_title());
             ImageView imageView = holder.mImageView;
             if (movie.getPoster_path() != null) {
-                Picasso.with(mContext).load("https://image.tmdb.org/t/p/w500/"
-                        + movie.getPoster_path()).into(imageView);
+                mRequestCreators.get(position).into(imageView);
             } else {
-                Picasso.with(mContext)
-                        .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
-                                "movie-poster-coming-soon_2_orig.png")
-                        .into(imageView);
+                defaultCreator.into(imageView);
             }
         } else if (position == 0) {
             TextView textView = holder.titleTextView;
