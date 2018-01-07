@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
@@ -28,6 +30,10 @@ public class MainActivity extends AppCompatActivity
         rvMovies = findViewById(R.id.rvMovies);
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.action_bar);
+        getSupportActionBar().setElevation(0f);
 
         Intent intent = new Intent(this, DownloadService.class);
         startService(intent);
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             mTwoPane = false;
-            getSupportActionBar().setElevation(0f);
+            //getSupportActionBar().setElevation(0f);
         }
     }
 

@@ -1,9 +1,9 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,9 +43,16 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        TextView titleTv = (TextView) view.findViewById(R.id.detail_movie);
-        TextView titleLowTv = (TextView) view.findViewById(R.id.detail_movie_low);
-        ImageView coverIv = (ImageView) view.findViewById(R.id.detail_icon);
+        TextView titleTv = view.findViewById(R.id.detail_movie);
+        TextView titleLowTv = view.findViewById(R.id.detail_movie_low);
+        ImageView coverIv = view.findViewById(R.id.detail_icon);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         if (mMovie != null) {
             titleTv.setText(mMovie.getOriginal_title());

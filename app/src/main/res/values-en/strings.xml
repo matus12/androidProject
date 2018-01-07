@@ -4,4 +4,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_movies_available">No movies available :(</string>
     <string name="movie_image">movie_image</string>
+    <string name="movie_database">MOVIE DATABASE</string>
+    <string name="discover">DISCOVER</string>
+    <string name="favorites">FAVORITES</string>
+    <string name="inCinemas">IN CINEMAS</string>
+    <string name="comingSoon">COMING SOON</string>
 </resources>
