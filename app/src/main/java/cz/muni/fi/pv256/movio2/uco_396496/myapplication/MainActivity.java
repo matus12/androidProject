@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(responseReceiver, filter);
     }
 
-    public void setMoviesView(ArrayList<MovieInfo> movieList) {
-        MoviesAdapter adapter = new MoviesAdapter(this, movieList, movieList.size(), mTwoPane);
+    public void setMoviesView(ArrayList<MovieInfo> movieList, int divider) {
+        MoviesAdapter adapter = new MoviesAdapter(this, movieList, divider, mTwoPane);
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
 
@@ -95,10 +95,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(final Context context, Intent intent) {
-            MoviesList movieList = intent.getParcelableExtra("movies");
+            MoviesList movieList = intent.getParcelableExtra("comingSoon");
             ArrayList<MovieInfo> movies = movieList.getResults();
+            int divider = movies.size();
+            movieList = intent.getParcelableExtra("inCinemas");
+            movies.addAll(movieList.getResults());
 
-            mMainActivity.setMoviesView(movies);
+            mMainActivity.setMoviesView(movies, divider);
         }
     }
 }
