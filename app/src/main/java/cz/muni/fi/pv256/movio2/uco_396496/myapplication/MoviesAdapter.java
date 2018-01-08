@@ -136,7 +136,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         if (mMovies == null) {
             return 0;
         }
-        return mMovies.size();
+        return mMovies.size() - 1;
     }
 
     @Override

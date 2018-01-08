@@ -10,10 +10,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.facebook.stetho.Stetho;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
 
 public class MainActivity extends AppCompatActivity
@@ -25,6 +33,9 @@ public class MainActivity extends AppCompatActivity
     private ResponseReceiver responseReceiver;
     private MoviesList mComingSoon;
     private MoviesList mInCinemas;
+    private MovieDbManager mDbManager;
+    private Movie movie;
+    private Button button;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -33,12 +44,26 @@ public class MainActivity extends AppCompatActivity
         rvMovies = findViewById(R.id.rvMovies);
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
+        Stetho.initializeWithDefaults(this);
 
+        //mDbManager.getMovies().get(0).getTitle()
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
         getSupportActionBar().setElevation(0f);
+        button = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
 
-        if(savedInstanceState == null){
+        mDbManager = new MovieDbManager(this);
+        final List<Movie> mmm = mDbManager.getMovies();
+        movie = new Movie();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getApplicationContext(), mmm.get(1).getTitle(), Toast.LENGTH_SHORT).show();
+                Log.d("APP", String.valueOf(mmm.size()));
+            }
+        });
+
+        if (savedInstanceState == null) {
             Intent intent = new Intent(this, DownloadService.class);
             startService(intent);
         } else {
@@ -131,6 +156,12 @@ public class MainActivity extends AppCompatActivity
             int divider = movies.size();
             mInCinemas = intent.getParcelableExtra("inCinemas");
             movies.addAll(mInCinemas.getResults());
+
+            movie.setTitle(movies.get(0).getOriginal_title());
+            movie.setRelease_date(movies.get(0).getRelease_date());
+            movie.setOverview(movies.get(0).getOverview());
+
+            //mDbManager.createMovie(movie);
 
             mMainActivity.setMoviesView(movies, divider);
         }

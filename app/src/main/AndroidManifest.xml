@@ -12,6 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        <provider
+            android:authorities="cz.muni.fi.pv256.movio2.uco_396496.myapplication"
+            android:name="cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbProvider"
+            />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

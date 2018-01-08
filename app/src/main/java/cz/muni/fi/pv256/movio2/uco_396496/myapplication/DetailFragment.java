@@ -9,10 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
+
 public class DetailFragment extends Fragment {
 
     public static final String TAG = DetailFragment.class.getSimpleName();
     private static final String ARGS_MOVIE = "args_movie";
+    private MovieDbManager mDbManager;
 
     private MovieInfo mMovie;
 
@@ -31,6 +35,7 @@ public class DetailFragment extends Fragment {
         if (args != null) {
             mMovie = args.getParcelable(ARGS_MOVIE);
         }
+        mDbManager = new MovieDbManager(getContext());
     }
 
     @Nullable
@@ -41,10 +46,17 @@ public class DetailFragment extends Fragment {
         TextView titleTv = view.findViewById(R.id.detail_movie);
         TextView titleLowTv = view.findViewById(R.id.detail_movie_low);
         TextView dateReleased = view.findViewById(R.id.release_date);
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        final FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Movie movie = new Movie();
+                movie.setTitle(mMovie.getOriginal_title());
+                movie.setOverview(mMovie.getOverview());
+                movie.setRelease_date(mMovie.getRelease_date());
+
+                mDbManager.createMovie(movie);
+                fab.setImageResource(R.drawable.ic_delete);
             }
         });
 
