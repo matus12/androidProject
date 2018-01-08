@@ -3,8 +3,8 @@ package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +16,24 @@ import com.squareup.picasso.RequestCreator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView titleTextView;
-        public ImageView mImageView;
+class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView titleTextView;
+        ImageView mImageView;
+        TextView numberOfStars;
         private boolean mTwoPane;
 
-        public ViewHolder(Context context, View itemView, int viewType, boolean twoPane) {
+        ViewHolder(Context context, View itemView, int viewType, boolean twoPane) {
             super(itemView);
 
             if (viewType == TYPE_MOVIE) {
-                titleTextView = (TextView) itemView.findViewById(R.id.movies_name);
-                mImageView = (ImageView) itemView.findViewById(R.id.imageView);
+                titleTextView = itemView.findViewById(R.id.movies_name);
+                mImageView = itemView.findViewById(R.id.imageView);
+                numberOfStars = itemView.findViewById(R.id.numberOfStars);
                 mTwoPane = twoPane;
                 itemView.setOnClickListener(this);
             } else {
-                titleTextView = (TextView) itemView.findViewById(R.id.textView);
+                titleTextView = itemView.findViewById(R.id.textView);
             }
         }
 
@@ -48,7 +50,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     fm.beginTransaction()
                             .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
                             .commit();
-
                 } else {
                     Intent intent = new Intent(mContext, MovieDetailActivity.class);
                     intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, movie);
@@ -67,13 +68,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private static final int TYPE_MOVIE = 0;
     private static final int TYPE_HEADER = 1;
 
-    public MoviesAdapter(Context context, List<MovieInfo> movies, int sectionSize, boolean twoPane) {
+    MoviesAdapter(Context context, List<MovieInfo> movies, int sectionSize, boolean twoPane) {
         mMovies = movies;
         mContext = context;
         mTwoPane = twoPane;
         mSectionSize = sectionSize;
         mRequestCreators = Data.getInstance().getData();
         defaultCreator = Data.getInstance().getDefaultCreator();
+
+        if (mTwoPane) {
+            FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
+
+            DetailFragment fragment = DetailFragment.newInstance(mMovies.get(1));
+            fm.beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
+                    .commit();
+        }
     }
 
     private Context getContext() {
@@ -104,6 +114,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
             TextView textView = holder.titleTextView;
             textView.setText(movie.getOriginal_title());
+            TextView starts = holder.numberOfStars;
+            starts.setText(movie.getVote_average());
             ImageView imageView = holder.mImageView;
             if (movie.getPoster_path() != null) {
                 mRequestCreators.get(position).into(imageView);

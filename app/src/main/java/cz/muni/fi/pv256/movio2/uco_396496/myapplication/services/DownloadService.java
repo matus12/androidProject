@@ -116,12 +116,12 @@ public class DownloadService extends IntentService {
         toYear = Integer.toString(calendar.get(Calendar.YEAR));
         toMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
         toDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
-        calendar.add(Calendar.DAY_OF_MONTH, -14);
+        calendar.add(Calendar.DAY_OF_MONTH, -21);
         fromYear = Integer.toString(calendar.get(Calendar.YEAR));
         fromMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
         fromDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
 
-        Call<MoviesList> call2 = service.getInCinemas(getUrl(
+        final Call<MoviesList> call2 = service.getInCinemas(getUrl(
                 fromYear,
                 fromMonth,
                 fromDay,
@@ -129,30 +129,8 @@ public class DownloadService extends IntentService {
                 toMonth,
                 toDay
         ));
-        
-        Callback<MoviesList> callback = new Callback<MoviesList>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesList> call, @NonNull Response<MoviesList> response) {
-                comingSoonMovies = response.body();
-                for (int i = 0; i < comingSoonMovies.getResults().size(); i++) {
-                    mRequestCreators.add(Picasso.with(mContext)
-                            .load("https://image.tmdb.org/t/p/w500/"
-                                    + comingSoonMovies.getResults().get(i).getPoster_path()));
-                }
 
-                Data.getInstance().setData(mRequestCreators);
-                Data.getInstance().setDefaultCreator(Picasso.with(mContext)
-                        .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
-                                "movie-poster-coming-soon_2_orig.png"));
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MoviesList> call, @NonNull Throwable t) {
-                Log.d("APP", "FAIL");
-            }
-        };
-
-        Callback<MoviesList> callback2 = new Callback<MoviesList>() {
+        final Callback<MoviesList> callback2 = new Callback<MoviesList>() {
             @Override
             public void onResponse(@NonNull Call<MoviesList> call, @NonNull Response<MoviesList> response) {
                 inCinemasMovies = response.body();
@@ -176,8 +154,30 @@ public class DownloadService extends IntentService {
             }
         };
 
+        Callback<MoviesList> callback = new Callback<MoviesList>() {
+            @Override
+            public void onResponse(@NonNull Call<MoviesList> call, @NonNull Response<MoviesList> response) {
+                comingSoonMovies = response.body();
+                for (int i = 0; i < comingSoonMovies.getResults().size(); i++) {
+                    mRequestCreators.add(Picasso.with(mContext)
+                            .load("https://image.tmdb.org/t/p/w500/"
+                                    + comingSoonMovies.getResults().get(i).getPoster_path()));
+                }
+
+                Data.getInstance().setData(mRequestCreators);
+                Data.getInstance().setDefaultCreator(Picasso.with(mContext)
+                        .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
+                                "movie-poster-coming-soon_2_orig.png"));
+                call2.enqueue(callback2);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MoviesList> call, @NonNull Throwable t) {
+                Log.d("APP", "FAIL");
+            }
+        };
+
         call.enqueue(callback);
-        call2.enqueue(callback2);
     }
 
     private void sendMovies() {

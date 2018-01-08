@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity
     private boolean mTwoPane;
     private RecyclerView rvMovies;
     private Bundle savedInstanceState;
+    private ResponseReceiver responseReceiver;
+    private MoviesList mComingSoon;
+    private MoviesList mInCinemas;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -35,20 +38,22 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setCustomView(R.layout.action_bar);
         getSupportActionBar().setElevation(0f);
 
-        Intent intent = new Intent(this, DownloadService.class);
-        startService(intent);
+        if(savedInstanceState == null){
+            Intent intent = new Intent(this, DownloadService.class);
+            startService(intent);
+        } else {
+            mComingSoon = savedInstanceState.getParcelable("comingSoon");
+            ArrayList<MovieInfo> movies = mComingSoon.getResults();
+            int divider = movies.size();
+            mInCinemas = savedInstanceState.getParcelable("inCinemas");
+            movies.addAll(mInCinemas.getResults());
 
-        IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        ResponseReceiver responseReceiver = new ResponseReceiver(this);
-        registerReceiver(responseReceiver, filter);
+            setMoviesView(movies, divider);
+        }
+
     }
 
     public void setMoviesView(ArrayList<MovieInfo> movieList, int divider) {
-        MoviesAdapter adapter = new MoviesAdapter(this, movieList, divider, mTwoPane);
-        rvMovies.setAdapter(adapter);
-        rvMovies.setLayoutManager(new LinearLayoutManager(this));
-
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
 
@@ -59,13 +64,39 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             mTwoPane = false;
-            //getSupportActionBar().setElevation(0f);
         }
+        MoviesAdapter adapter = new MoviesAdapter(this, movieList, divider, mTwoPane);
+        rvMovies.setAdapter(adapter);
+        rvMovies.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        responseReceiver = new ResponseReceiver(this);
+        registerReceiver(responseReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(responseReceiver);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("comingSoon", mComingSoon);
+        outState.putParcelable("inCinemas", mInCinemas);
+
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -95,11 +126,11 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(final Context context, Intent intent) {
-            MoviesList movieList = intent.getParcelableExtra("comingSoon");
-            ArrayList<MovieInfo> movies = movieList.getResults();
+            mComingSoon = intent.getParcelableExtra("comingSoon");
+            ArrayList<MovieInfo> movies = mComingSoon.getResults();
             int divider = movies.size();
-            movieList = intent.getParcelableExtra("inCinemas");
-            movies.addAll(movieList.getResults());
+            mInCinemas = intent.getParcelableExtra("inCinemas");
+            movies.addAll(mInCinemas.getResults());
 
             mMainActivity.setMoviesView(movies, divider);
         }
