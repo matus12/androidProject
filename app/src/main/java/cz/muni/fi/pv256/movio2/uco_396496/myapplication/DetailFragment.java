@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
@@ -46,17 +47,34 @@ public class DetailFragment extends Fragment {
         TextView titleTv = view.findViewById(R.id.detail_movie);
         TextView titleLowTv = view.findViewById(R.id.detail_movie_low);
         TextView dateReleased = view.findViewById(R.id.release_date);
+
         final FloatingActionButton fab = view.findViewById(R.id.fab);
+
+        if (mMovie == null) getArguments().getParcelable(ARGS_MOVIE);
+
+        if (mDbManager.getMovieByName(mMovie.getOriginal_title()) != null){
+            fab.setImageResource(R.drawable.ic_delete);
+        } else {
+            fab.setImageResource(R.drawable.ic_save_black_24dp);
+        }
+
+        final Movie movie = new Movie();
+        movie.setTitle(mMovie.getOriginal_title());
+        movie.setOverview(mMovie.getOverview());
+        movie.setRelease_date(mMovie.getRelease_date());
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Movie movie = new Movie();
-                movie.setTitle(mMovie.getOriginal_title());
-                movie.setOverview(mMovie.getOverview());
-                movie.setRelease_date(mMovie.getRelease_date());
-
-                mDbManager.createMovie(movie);
-                fab.setImageResource(R.drawable.ic_delete);
+                if (mDbManager.getMovieByName(mMovie.getOriginal_title()) == null){
+                    mDbManager.createMovie(movie);
+                    Toast.makeText(getContext(), "Movie saved to favorites", Toast.LENGTH_SHORT).show();
+                    fab.setImageResource(R.drawable.ic_delete);
+                } else {
+                    mDbManager.deleteMovie(mMovie.getOriginal_title());
+                    Toast.makeText(getContext(), "Movie deleted from favorites", Toast.LENGTH_SHORT).show();
+                    fab.setImageResource(R.drawable.ic_save_black_24dp);
+                }
             }
         });
 

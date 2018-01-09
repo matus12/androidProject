@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity
     private MoviesList mInCinemas;
     private MovieDbManager mDbManager;
     private Movie movie;
-    private Button button;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -46,36 +46,26 @@ public class MainActivity extends AppCompatActivity
         this.savedInstanceState = savedInstanceState;
         Stetho.initializeWithDefaults(this);
 
-        //mDbManager.getMovies().get(0).getTitle()
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
         getSupportActionBar().setElevation(0f);
-        button = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
+        Button discoverButton = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
 
         mDbManager = new MovieDbManager(this);
-        final List<Movie> mmm = mDbManager.getMovies();
         movie = new Movie();
-        button.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(getApplicationContext(), mmm.get(1).getTitle(), Toast.LENGTH_SHORT).show();
-                Log.d("APP", String.valueOf(mmm.size()));
+                Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+                startService(intent);
             }
-        });
+        };
+        discoverButton.setOnClickListener(listener);
 
         if (savedInstanceState == null) {
             Intent intent = new Intent(this, DownloadService.class);
             startService(intent);
-        } else {
-            mComingSoon = savedInstanceState.getParcelable("comingSoon");
-            ArrayList<MovieInfo> movies = mComingSoon.getResults();
-            int divider = movies.size();
-            mInCinemas = savedInstanceState.getParcelable("inCinemas");
-            movies.addAll(mInCinemas.getResults());
-
-            setMoviesView(movies, divider);
         }
-
     }
 
     public void setMoviesView(ArrayList<MovieInfo> movieList, int divider) {
@@ -125,6 +115,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mComingSoon = savedInstanceState.getParcelable("comingSoon");
+        mInCinemas = savedInstanceState.getParcelable("inCinemas");
+
+        ArrayList<MovieInfo> movies = new ArrayList<>();
+        movies.addAll(mComingSoon.getResults());
+        movies.addAll(mInCinemas.getResults());
+        int divider = mComingSoon.getResults().size();
+
+
+        setMoviesView(movies, divider);
+    }
+
+    @Override
     public void onMovieSelect(MovieInfo movie) {
         if (mTwoPane) {
             FragmentManager fm = getSupportFragmentManager();
@@ -152,16 +159,15 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(final Context context, Intent intent) {
             mComingSoon = intent.getParcelableExtra("comingSoon");
-            ArrayList<MovieInfo> movies = mComingSoon.getResults();
-            int divider = movies.size();
+            ArrayList<MovieInfo> movies = new ArrayList<>();
+            movies.addAll(mComingSoon.getResults());
+            int divider = mComingSoon.getResults().size();
             mInCinemas = intent.getParcelableExtra("inCinemas");
             movies.addAll(mInCinemas.getResults());
 
             movie.setTitle(movies.get(0).getOriginal_title());
             movie.setRelease_date(movies.get(0).getRelease_date());
             movie.setOverview(movies.get(0).getOverview());
-
-            //mDbManager.createMovie(movie);
 
             mMainActivity.setMoviesView(movies, divider);
         }

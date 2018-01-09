@@ -24,6 +24,7 @@ public class MovieDbManager {
     };
 
     private static final String WHERE_ID = MovieDbContract.MovieEntry._ID + " = ?";
+    private static final String WHERE_TITLE = MovieDbContract.MovieEntry.COLUMN_MOVIE_TITLE_TEXT+ " = ?";
 
     private Context mContext;
 
@@ -51,6 +52,20 @@ public class MovieDbManager {
         movie.setId(ContentUris.parseId(mContext.getContentResolver().insert(MovieDbContract.MovieEntry.CONTENT_URI, prepareMovieValues(movie))));
     }
 
+    public Movie getMovieByName(String movieTitle){
+        Cursor cursor = mContext.getContentResolver().query(MovieDbContract.MovieEntry.CONTENT_URI, MOVIE_COLUMNS, WHERE_TITLE, new String[]{movieTitle}, null);
+        Movie movie;
+        if (cursor != null && cursor.moveToFirst()) {
+            try {
+                movie = getMovie(cursor);
+            } finally {
+                cursor.close();
+            }
+            return movie;
+        }
+        return null;
+    }
+
     public List<Movie> getMovies() {
         Cursor cursor = mContext.getContentResolver().query(MovieDbContract.MovieEntry.CONTENT_URI, MOVIE_COLUMNS, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -69,15 +84,12 @@ public class MovieDbManager {
         return Collections.emptyList();
     }
 
-    public void deleteMovie(Movie movie) {
-        if (movie == null) {
-            throw new NullPointerException("movie == null");
-        }
-        if (movie.getId() == null) {
-            throw new IllegalStateException("movie id cannot be null");
+    public void deleteMovie(String title) {
+        if (title == null) {
+            throw new NullPointerException("title == null");
         }
 
-        mContext.getContentResolver().delete(MovieDbContract.MovieEntry.CONTENT_URI, WHERE_ID, new String[]{String.valueOf(movie.getId())});
+        mContext.getContentResolver().delete(MovieDbContract.MovieEntry.CONTENT_URI, WHERE_TITLE, new String[]{title});
     }
 
     private ContentValues prepareMovieValues(Movie movie) {

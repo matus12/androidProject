@@ -40,8 +40,14 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
+            int moviePosition;
+            if (position < mSectionSize) {
+                moviePosition = position - 1;
+            } else {
+                moviePosition = position - 2;
+            }
             if (position != RecyclerView.NO_POSITION) {
-                MovieInfo movie = mMovies.get(position);
+                MovieInfo movie = mMovies.get(moviePosition);
 
                 if (mTwoPane) {
                     FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
@@ -79,7 +85,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         if (mTwoPane) {
             FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
 
-            DetailFragment fragment = DetailFragment.newInstance(mMovies.get(1));
+            DetailFragment fragment = DetailFragment.newInstance(mMovies.get(0));
             fm.beginTransaction()
                     .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
                     .commit();
@@ -109,8 +115,15 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(MoviesAdapter.ViewHolder holder, int position) {
+        int moviePosition;
+        if (position < mSectionSize) {
+            moviePosition = position - 1;
+        } else {
+            moviePosition = position - 2;
+        }
         if (getItemViewType(position) == TYPE_MOVIE) {
-            MovieInfo movie = mMovies.get(position);
+
+            MovieInfo movie = mMovies.get(moviePosition);
 
             TextView textView = holder.titleTextView;
             textView.setText(movie.getOriginal_title());
@@ -118,7 +131,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
             starts.setText(movie.getVote_average());
             ImageView imageView = holder.mImageView;
             if (movie.getPoster_path() != null) {
-                mRequestCreators.get(position).into(imageView);
+                mRequestCreators.get(moviePosition).into(imageView);
             } else {
                 defaultCreator.into(imageView);
             }
@@ -136,7 +149,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         if (mMovies == null) {
             return 0;
         }
-        return mMovies.size() - 1;
+        return mMovies.size() + 2;
     }
 
     @Override
