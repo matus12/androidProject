@@ -20,6 +20,8 @@ public class MovieDbContract {
         public static final String COLUMN_MOVIE_TITLE_TEXT = "movie_title";
         public static final String COLUMN_RELEASE_DATE_TEXT = "release_date";
         public static final String COLUMN_OVERVIEW_TEXT = "overview";
+        public static final String COLUMN_RATING_TEXT = "rating";
+        public static final String COLUMN_POSTER_PATH_TEXT = "poster_path";
 
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

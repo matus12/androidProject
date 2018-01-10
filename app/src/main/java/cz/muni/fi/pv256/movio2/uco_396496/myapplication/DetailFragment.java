@@ -62,6 +62,8 @@ public class DetailFragment extends Fragment {
         movie.setTitle(mMovie.getOriginal_title());
         movie.setOverview(mMovie.getOverview());
         movie.setRelease_date(mMovie.getRelease_date());
+        movie.setRating(mMovie.getVote_average());
+        movie.setPoster_path(mMovie.getPoster_path());
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

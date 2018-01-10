@@ -69,16 +69,18 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     private Context mContext;
     private int mSectionSize;
     private boolean mTwoPane;
+    private boolean mFavorites;
     private List<RequestCreator> mRequestCreators;
     private RequestCreator defaultCreator;
     private static final int TYPE_MOVIE = 0;
     private static final int TYPE_HEADER = 1;
 
-    MoviesAdapter(Context context, List<MovieInfo> movies, int sectionSize, boolean twoPane) {
+    MoviesAdapter(Context context, List<MovieInfo> movies, int sectionSize, boolean twoPane, boolean favorites) {
         mMovies = movies;
         mContext = context;
         mTwoPane = twoPane;
         mSectionSize = sectionSize;
+        mFavorites = favorites;
         mRequestCreators = Data.getInstance().getData();
         defaultCreator = Data.getInstance().getDefaultCreator();
 
@@ -135,10 +137,15 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
             } else {
                 defaultCreator.into(imageView);
             }
-        } else if (position == 0) {
+        } else if (position == 0 && !mFavorites) {
             TextView textView = holder.titleTextView;
             textView.setText(R.string.comingSoon);
-        } else {
+
+        } else if (position == 0 && mFavorites){
+            TextView textView = holder.titleTextView;
+            textView.setText(R.string.favorites);
+        }
+        else {
             TextView textView = holder.titleTextView;
             textView.setText(R.string.inCinemas);
         }
@@ -148,6 +155,9 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     public int getItemCount() {
         if (mMovies == null) {
             return 0;
+        }
+        if (mFavorites){
+            return mMovies.size() + 1;
         }
         return mMovies.size() + 2;
     }

@@ -3,6 +3,7 @@ package cz.muni.fi.pv256.movio2.uco_396496.myapplication.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbContract.MovieEntry;
 
@@ -21,7 +22,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry._ID + " INTEGER PRIMARY KEY," +
                 MovieEntry.COLUMN_MOVIE_TITLE_TEXT + " TEXT," +
                 MovieEntry.COLUMN_OVERVIEW_TEXT + " TEXT," +
-                MovieEntry.COLUMN_RELEASE_DATE_TEXT + " TEXT" +
+                MovieEntry.COLUMN_RELEASE_DATE_TEXT + " TEXT," +
+                MovieEntry.COLUMN_RATING_TEXT + " TEXT," +
+                MovieEntry.COLUMN_POSTER_PATH_TEXT + " TEXT" +
                 " );";
         db.execSQL(SQL_CREATE_LOCATION_TABLE);
     }
