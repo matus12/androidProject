@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity
                         favoriteMovies.add(movieInfo);
                     }
                 }
-                Toast.makeText(getApplicationContext(), String.valueOf(favoriteMovies.size()), Toast.LENGTH_SHORT).show();
                 setMoviesView(favoriteMovies, favoriteMovies.size()+1, true);
             }
         };

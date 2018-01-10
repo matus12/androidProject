@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
 import java.util.ArrayList;
@@ -87,10 +88,12 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         if (mTwoPane) {
             FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
 
-            DetailFragment fragment = DetailFragment.newInstance(mMovies.get(0));
-            fm.beginTransaction()
-                    .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
-                    .commit();
+            if (mMovies.size() > 0) {
+                DetailFragment fragment = DetailFragment.newInstance(mMovies.get(0));
+                fm.beginTransaction()
+                        .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
+                        .commit();
+            }
         }
     }
 
@@ -132,20 +135,19 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
             TextView starts = holder.numberOfStars;
             starts.setText(movie.getVote_average());
             ImageView imageView = holder.mImageView;
-            if (movie.getPoster_path() != null) {
-                mRequestCreators.get(moviePosition).into(imageView);
+            if (movie.getPoster_path() != null && mRequestCreators != null) {
+                Picasso.with(mContext).load("https://image.tmdb.org/t/p/w500/" + movie.getPoster_path()).into(imageView);
             } else {
-                defaultCreator.into(imageView);
+                imageView.setImageResource(R.drawable.noposter);
             }
         } else if (position == 0 && !mFavorites) {
             TextView textView = holder.titleTextView;
             textView.setText(R.string.comingSoon);
 
-        } else if (position == 0 && mFavorites){
+        } else if (position == 0 && mFavorites) {
             TextView textView = holder.titleTextView;
             textView.setText(R.string.favorites);
-        }
-        else {
+        } else {
             TextView textView = holder.titleTextView;
             textView.setText(R.string.inCinemas);
         }
@@ -156,7 +158,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         if (mMovies == null) {
             return 0;
         }
-        if (mFavorites){
+        if (mFavorites) {
             return mMovies.size() + 1;
         }
         return mMovies.size() + 2;
