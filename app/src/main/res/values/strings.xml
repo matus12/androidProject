@@ -13,4 +13,6 @@
     <string name="movie_database">MOVIE DATABASE</string>
     <string name="discover">DISCOVER</string>
     <string name="favorites">FAVORITES</string>
+    <string name="content_authority">cz.muni.fi.pv256.movio2.uco_396496.myapplication</string>
+    <string name="sync_account_type">account.com</string>
 </resources>

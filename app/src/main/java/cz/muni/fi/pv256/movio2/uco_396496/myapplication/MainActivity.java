@@ -1,6 +1,7 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,6 +29,7 @@ import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.loader.MoviesLoader;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.sync.UpdaterSyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements MainFragment.OnMovieSelectListener {
@@ -52,7 +54,11 @@ public class MainActivity extends AppCompatActivity
         mFavorites = false;
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
+
         Stetho.initializeWithDefaults(this);
+
+        UpdaterSyncAdapter.initializeSyncAdapter(this);
+        UpdaterSyncAdapter.syncImmediately(this);
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 mFavorites = false;
                 Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+                stopService(intent);
                 startService(intent);
             }
         };
