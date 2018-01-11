@@ -10,13 +10,12 @@ import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+
+import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.R;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
-
-import static android.provider.BlockedNumberContract.AUTHORITY;
 
 public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -57,7 +56,6 @@ public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.content_authority), bundle);
-        Log.d("APP", "SYNC IMMEDIATELY");
     }
 
     public static void initializeSyncAdapter(Context context) {
@@ -111,7 +109,6 @@ public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
          * Without calling setSyncAutomatically, our periodic sync will not be enabled.
          */
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
-        Log.d("APP", "SET SYNC AUTOMATICALLY");
 
         /*
          * Finally, let's do a sync to get things started
@@ -121,15 +118,6 @@ public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d("APP", "HELLO UPDATE");
-        MovieDbManager movieDbManager = new MovieDbManager(getContext());
-        //TODO update
-        Movie movie = new Movie();
-        movie.setTitle("Synced movie");
-        movie.setRating("10");
-        movie.setOverview("Just some synced movie that I totally made up yo!");
-        movie.setRelease_date("2018-1-12");
-        movie.setPoster_path("adw6Lq9FiC9zjYEpOqfq03ituwp.jpg");
-        movieDbManager.createMovie(movie);
+        //TODO sync
     }
 }

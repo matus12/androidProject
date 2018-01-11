@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setElevation(0f);
         Button discoverButton = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
         favoriteButton = getSupportActionBar().getCustomView().findViewById(R.id.button_favorites);
+        Button syncButton = getSupportActionBar().getCustomView().findViewById(R.id.button_sync);
 
         getSupportLoaderManager().initLoader(R.id.movie_loader_id, null, mLoaderCallbacks);
 
@@ -101,8 +102,17 @@ public class MainActivity extends AppCompatActivity
                 setMoviesView(favoriteMovies, favoriteMovies.size()+1, true);
             }
         };
+        View.OnClickListener syncButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UpdaterSyncAdapter.syncImmediately(getApplicationContext());
+                favoriteButton.performClick();
+            }
+        };
+
         discoverButton.setOnClickListener(discoverButtonListener);
         favoriteButton.setOnClickListener(favoriteButtonListener);
+        syncButton.setOnClickListener(syncButtonListener);
 
         if (savedInstanceState == null) {
             Intent intent = new Intent(this, DownloadService.class);

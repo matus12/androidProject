@@ -7,11 +7,11 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:elevation="0dp"
         android:text="@string/movie_database"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:textStyle="bold"/>
 
     <Button
@@ -20,7 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/discover"/>
+        android:text="@string/discover"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/button_favorites"
@@ -28,5 +30,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/favorites"/>
+        android:text="@string/favorites"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/button_sync"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="SYNC"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
 </LinearLayout>
