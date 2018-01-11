@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,12 +26,14 @@ import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.loader.MoviesLoader;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
 
 public class MainActivity extends AppCompatActivity
         implements MainFragment.OnMovieSelectListener {
 
     private boolean mTwoPane;
+    private boolean mFavorites;
     private RecyclerView rvMovies;
     private Bundle savedInstanceState;
     private ResponseReceiver responseReceiver;
@@ -38,12 +42,14 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<MovieInfo> favoriteMovies;
     private MovieDbManager mDbManager;
     private Movie movie;
+    public static Button favoriteButton;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rvMovies = findViewById(R.id.rvMovies);
+        mFavorites = false;
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
         Stetho.initializeWithDefaults(this);
@@ -52,13 +58,16 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setCustomView(R.layout.action_bar);
         getSupportActionBar().setElevation(0f);
         Button discoverButton = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
-        Button favoriteButton = getSupportActionBar().getCustomView().findViewById(R.id.button_favorites);
+        favoriteButton = getSupportActionBar().getCustomView().findViewById(R.id.button_favorites);
+
+        getSupportLoaderManager().initLoader(R.id.movie_loader_id, null, mLoaderCallbacks);
 
         mDbManager = new MovieDbManager(this);
         movie = new Movie();
         View.OnClickListener discoverButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mFavorites = false;
                 Intent intent = new Intent(getApplicationContext(), DownloadService.class);
                 startService(intent);
             }
@@ -66,6 +75,7 @@ public class MainActivity extends AppCompatActivity
         View.OnClickListener favoriteButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mFavorites = true;
                 favoriteMovies = new ArrayList<>();
                 List<Movie> moviesFromDb = mDbManager.getMovies();
                 for (int i=0; i < moviesFromDb.size(); i++){
@@ -93,6 +103,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             mComingSoon = savedInstanceState.getParcelable("comingSoon");
             mInCinemas = savedInstanceState.getParcelable("inCinemas");
+            mFavorites = savedInstanceState.getBoolean("favorites");
 
             ArrayList<MovieInfo> movies = new ArrayList<>();
             movies.addAll(mComingSoon.getResults());
@@ -144,6 +155,7 @@ public class MainActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("comingSoon", mComingSoon);
         outState.putParcelable("inCinemas", mInCinemas);
+        outState.putBoolean("favorites", mFavorites);
 
         super.onSaveInstanceState(outState);
     }
@@ -189,4 +201,37 @@ public class MainActivity extends AppCompatActivity
             mMainActivity.setMoviesView(movies, divider, false);
         }
     }
+
+    private LoaderManager.LoaderCallbacks<List<Movie>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Movie>>() {
+        @Override
+        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+            return new MoviesLoader(getApplicationContext());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> moviesFromDb) {
+            if (mFavorites){
+                favoriteMovies = new ArrayList<>();
+                for (int i = 0; i < moviesFromDb.size(); i++){
+                    Movie movie = moviesFromDb.get(i);
+                    MovieInfo movieInfo = new MovieInfo(
+                            movie.getTitle(),
+                            movie.getRating(),
+                            movie.getPoster_path(),
+                            movie.getRelease_date(),
+                            movie.getOverview()
+                    );
+                    if (!favoriteMovies.contains(movieInfo)){
+                        favoriteMovies.add(movieInfo);
+                    }
+                }
+                setMoviesView(favoriteMovies, favoriteMovies.size()+1, true);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Movie>> loader) {
+
+        }
+    };
 }

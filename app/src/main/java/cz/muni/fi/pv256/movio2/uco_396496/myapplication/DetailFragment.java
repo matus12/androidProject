@@ -1,5 +1,6 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -7,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import amagi82.flexibleratingbar.FlexibleRatingBar;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
 
@@ -33,10 +36,21 @@ public class DetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+        mDbManager = new MovieDbManager(getContext());
         if (args != null) {
             mMovie = args.getParcelable(ARGS_MOVIE);
+        } else {
+            Movie m = mDbManager.getMovies().get(0);
+            if (m != null) {
+                mMovie = new MovieInfo(
+                        m.getTitle(),
+                        m.getRating(),
+                        m.getPoster_path(),
+                        m.getRelease_date(),
+                        m.getOverview()
+                );
+            }
         }
-        mDbManager = new MovieDbManager(getContext());
     }
 
     @Nullable
@@ -47,10 +61,11 @@ public class DetailFragment extends Fragment {
         TextView titleTv = view.findViewById(R.id.detail_movie);
         TextView titleLowTv = view.findViewById(R.id.detail_movie_low);
         TextView dateReleased = view.findViewById(R.id.release_date);
+        FlexibleRatingBar ratingBar = view.findViewById(R.id.rating);
 
         final FloatingActionButton fab = view.findViewById(R.id.fab);
 
-        if (mMovie == null) getArguments().getParcelable(ARGS_MOVIE);
+        if (mMovie == null) return view;
 
         if (mDbManager.getMovieByName(mMovie.getOriginal_title()) != null){
             fab.setImageResource(R.drawable.ic_delete);
@@ -76,6 +91,7 @@ public class DetailFragment extends Fragment {
                     mDbManager.deleteMovie(mMovie.getOriginal_title());
                     Toast.makeText(getContext(), "Movie deleted from favorites", Toast.LENGTH_SHORT).show();
                     fab.setImageResource(R.drawable.ic_save_black_24dp);
+                    MainActivity.favoriteButton.performClick();
                 }
             }
         });
@@ -84,6 +100,15 @@ public class DetailFragment extends Fragment {
             titleTv.setText(mMovie.getOriginal_title());
             titleLowTv.setText(mMovie.getOverview());
             dateReleased.setText(mMovie.getRelease_date());
+
+            ratingBar.setStepSize(0.1f);
+            ratingBar.setNumStars(10);
+            ratingBar.setIsIndicator(true);
+            ratingBar.setColorOutlineOff(Color.rgb(255, 255, 255));
+            ratingBar.setColorOutlineOn(Color.rgb(255, 255, 255));
+            ratingBar.setColorFillOff(Color.rgb(200, 200, 200));
+            ratingBar.setRating(Float.parseFloat(mMovie.getVote_average()));
+
         }
         return view;
     }

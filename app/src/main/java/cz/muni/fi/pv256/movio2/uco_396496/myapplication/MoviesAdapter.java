@@ -2,6 +2,10 @@ package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,13 +90,23 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
         defaultCreator = Data.getInstance().getDefaultCreator();
 
         if (mTwoPane) {
-            FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
+            final FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
 
             if (mMovies.size() > 0) {
-                DetailFragment fragment = DetailFragment.newInstance(mMovies.get(0));
-                fm.beginTransaction()
-                        .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
-                        .commit();
+                final int WHAT = 1;
+                Handler handler = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if(msg.what == WHAT) {
+                            DetailFragment fragment = DetailFragment.newInstance(mMovies.get(0));
+                            fm.beginTransaction()
+                                    .replace(R.id.movie_detail_container, fragment, DetailFragment.TAG)
+                                    .commit();
+                        }
+                    }
+                };
+                handler.sendEmptyMessage(WHAT);
+
             }
         }
     }

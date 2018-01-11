@@ -1,6 +1,7 @@
 
 <!-- Master layout. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -9,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <ImageView
             android:id="@+id/detail_icon"
@@ -19,21 +21,73 @@
         <TextView
             android:id="@+id/detail_movie"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
+            android:layout_weight="3"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAllCaps="true"
             android:textAppearance="?android:textAppearanceLarge"
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:lineSpacingExtra="10sp"
+            android:text="Overview"
             android:textColor="#000000"
-            android:textSize="12pt"/>
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/detail_movie_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="#000000"
+            android:textColor="#333333"
             android:textSize="8pt"/>
 
         <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:lineSpacingExtra="10sp"
+            android:text="Release date"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+        <TextView
             android:id="@+id/release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="left"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="#333333"
+            android:textSize="8pt"/>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:lineSpacingExtra="10sp"
+            android:text="Rating"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+        <amagi82.flexibleratingbar.FlexibleRatingBar
+            android:id="@+id/rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -41,10 +95,11 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_margin="16dp"
             android:clickable="true"
             android:src="@drawable/ic_save_black_24dp"/>
+
     </LinearLayout>
 
 </ScrollView>
