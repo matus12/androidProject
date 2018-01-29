@@ -126,7 +126,6 @@ public class MovieDbProvider extends ContentProvider {
         // Because a null deletes all rows
         if (selection == null || rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
-            Log.d("APP", "NOTIFY CHANGE!");
         }
         return rowsDeleted;
     }

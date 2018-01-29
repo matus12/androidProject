@@ -9,6 +9,16 @@ public final class Movie {
     private String rating;
     private String poster_path;
 
+    public String getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(String movie_id) {
+        this.movie_id = movie_id;
+    }
+
+    private String movie_id;
+
     public Long getId() {
         return id;
     }

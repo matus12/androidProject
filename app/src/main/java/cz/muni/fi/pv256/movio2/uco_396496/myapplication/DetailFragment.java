@@ -47,7 +47,8 @@ public class DetailFragment extends Fragment {
                         m.getRating(),
                         m.getPoster_path(),
                         m.getRelease_date(),
-                        m.getOverview()
+                        m.getOverview(),
+                        m.getMovie_id()
                 );
             }
         }
@@ -79,11 +80,12 @@ public class DetailFragment extends Fragment {
         movie.setRelease_date(mMovie.getRelease_date());
         movie.setRating(mMovie.getVote_average());
         movie.setPoster_path(mMovie.getPoster_path());
+        movie.setMovie_id(mMovie.getMovie_id());
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mDbManager.getMovieByName(mMovie.getOriginal_title()) == null){
+                if (mDbManager.getMovieByName(mMovie.getOriginal_title()) == null) {
                     mDbManager.createMovie(movie);
                     Toast.makeText(getContext(), "Movie saved to favorites", Toast.LENGTH_SHORT).show();
                     fab.setImageResource(R.drawable.ic_delete);
@@ -94,7 +96,8 @@ public class DetailFragment extends Fragment {
                     MainActivity.favoriteButton.performClick();
                 }
             }
-        });
+        };
+        fab.setOnClickListener(onClickListener);
 
         if (mMovie != null) {
             titleTv.setText(mMovie.getOriginal_title());

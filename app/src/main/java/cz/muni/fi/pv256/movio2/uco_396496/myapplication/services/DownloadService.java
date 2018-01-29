@@ -46,6 +46,7 @@ public class DownloadService extends IntentService {
         mCurrentTime = Calendar.getInstance().getTime();
         calendar = Calendar.getInstance();
         calendar.setTime(mCurrentTime);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         fromYear = Integer.toString(calendar.get(Calendar.YEAR));
         fromMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
         fromDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));

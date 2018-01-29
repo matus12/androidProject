@@ -1,6 +1,7 @@
 package cz.muni.fi.pv256.movio2.uco_396496.myapplication;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,9 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbHelper;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.loader.MoviesLoader;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.sync.UpdaterSyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements MainFragment.OnMovieSelectListener {
@@ -52,13 +55,18 @@ public class MainActivity extends AppCompatActivity
         mFavorites = false;
         TextView emptyView = findViewById(R.id.empty_view);
         this.savedInstanceState = savedInstanceState;
+
         Stetho.initializeWithDefaults(this);
+
+        UpdaterSyncAdapter.initializeSyncAdapter(this);
+        UpdaterSyncAdapter.syncImmediately(this);
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
         getSupportActionBar().setElevation(0f);
         Button discoverButton = getSupportActionBar().getCustomView().findViewById(R.id.button_discover);
         favoriteButton = getSupportActionBar().getCustomView().findViewById(R.id.button_favorites);
+        Button syncButton = getSupportActionBar().getCustomView().findViewById(R.id.button_sync);
 
         getSupportLoaderManager().initLoader(R.id.movie_loader_id, null, mLoaderCallbacks);
 
@@ -69,6 +77,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 mFavorites = false;
                 Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+                stopService(intent);
                 startService(intent);
             }
         };
@@ -85,7 +94,8 @@ public class MainActivity extends AppCompatActivity
                             movie.getRating(),
                             movie.getPoster_path(),
                             movie.getRelease_date(),
-                            movie.getOverview()
+                            movie.getOverview(),
+                            movie.getMovie_id()
                     );
                     if (!favoriteMovies.contains(movieInfo)){
                         favoriteMovies.add(movieInfo);
@@ -94,8 +104,17 @@ public class MainActivity extends AppCompatActivity
                 setMoviesView(favoriteMovies, favoriteMovies.size()+1, true);
             }
         };
+        View.OnClickListener syncButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UpdaterSyncAdapter.syncImmediately(getApplicationContext());
+                favoriteButton.performClick();
+            }
+        };
+
         discoverButton.setOnClickListener(discoverButtonListener);
         favoriteButton.setOnClickListener(favoriteButtonListener);
+        syncButton.setOnClickListener(syncButtonListener);
 
         if (savedInstanceState == null) {
             Intent intent = new Intent(this, DownloadService.class);
@@ -219,7 +238,8 @@ public class MainActivity extends AppCompatActivity
                             movie.getRating(),
                             movie.getPoster_path(),
                             movie.getRelease_date(),
-                            movie.getOverview()
+                            movie.getOverview(),
+                            movie.getMovie_id()
                     );
                     if (!favoriteMovies.contains(movieInfo)){
                         favoriteMovies.add(movieInfo);
