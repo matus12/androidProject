@@ -18,6 +18,7 @@ public class MovieDbManager {
     public static final int COL_MOVIE_RELEASE_DATE = 3;
     public static final int COL_MOVIE_RATING = 4;
     public static final int COL_MOVIE_POSTER_PATH = 5;
+    public static final int COL_MOVIE_MOVIE_ID = 6;
 
     private static final String[] MOVIE_COLUMNS = {
             MovieDbContract.MovieEntry._ID,
@@ -26,9 +27,10 @@ public class MovieDbManager {
             MovieDbContract.MovieEntry.COLUMN_RELEASE_DATE_TEXT,
             MovieDbContract.MovieEntry.COLUMN_RATING_TEXT,
             MovieDbContract.MovieEntry.COLUMN_POSTER_PATH_TEXT,
+            MovieDbContract.MovieEntry.COLUMN_MOVIE_ID_TEXT,
     };
 
-    private static final String WHERE_ID = MovieDbContract.MovieEntry._ID + " = ?";
+    private static final String WHERE_ID = MovieDbContract.MovieEntry.COLUMN_MOVIE_ID_TEXT + " = ?";
     private static final String WHERE_TITLE = MovieDbContract.MovieEntry.COLUMN_MOVIE_TITLE_TEXT+ " = ?";
 
     private Context mContext;
@@ -52,6 +54,9 @@ public class MovieDbManager {
         }
         if (movie.getTitle() == null) {
             throw new IllegalStateException("movie title date cannot be null");
+        }
+        if (movie.getMovie_id() == null){
+            throw new IllegalStateException("movie movie_id cannot be null");
         }
 
         movie.setId(ContentUris.parseId(mContext.getContentResolver().insert(MovieDbContract.MovieEntry.CONTENT_URI, prepareMovieValues(movie))));
@@ -104,6 +109,7 @@ public class MovieDbManager {
         values.put(MovieDbContract.MovieEntry.COLUMN_RELEASE_DATE_TEXT, movie.getRelease_date());
         values.put(MovieDbContract.MovieEntry.COLUMN_RATING_TEXT, movie.getRating());
         values.put(MovieDbContract.MovieEntry.COLUMN_POSTER_PATH_TEXT, movie.getPoster_path());
+        values.put(MovieDbContract.MovieEntry.COLUMN_MOVIE_ID_TEXT, movie.getMovie_id());
         return values;
     }
 
@@ -115,6 +121,7 @@ public class MovieDbManager {
         movie.setRelease_date(cursor.getString(COL_MOVIE_RELEASE_DATE));
         movie.setRating(cursor.getString(COL_MOVIE_RATING));
         movie.setPoster_path(cursor.getString(COL_MOVIE_POSTER_PATH));
+        movie.setMovie_id(cursor.getString(COL_MOVIE_MOVIE_ID));
 
         return movie;
     }

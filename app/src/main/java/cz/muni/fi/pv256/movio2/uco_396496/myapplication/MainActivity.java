@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.Movie;
+import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbHelper;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.database.MovieDbManager;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.loader.MoviesLoader;
 import cz.muni.fi.pv256.movio2.uco_396496.myapplication.services.DownloadService;
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity
                             movie.getRating(),
                             movie.getPoster_path(),
                             movie.getRelease_date(),
-                            movie.getOverview()
+                            movie.getOverview(),
+                            movie.getMovie_id()
                     );
                     if (!favoriteMovies.contains(movieInfo)){
                         favoriteMovies.add(movieInfo);
@@ -236,7 +238,8 @@ public class MainActivity extends AppCompatActivity
                             movie.getRating(),
                             movie.getPoster_path(),
                             movie.getRelease_date(),
-                            movie.getOverview()
+                            movie.getOverview(),
+                            movie.getMovie_id()
                     );
                     if (!favoriteMovies.contains(movieInfo)){
                         favoriteMovies.add(movieInfo);

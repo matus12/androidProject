@@ -24,7 +24,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_OVERVIEW_TEXT + " TEXT," +
                 MovieEntry.COLUMN_RELEASE_DATE_TEXT + " TEXT," +
                 MovieEntry.COLUMN_RATING_TEXT + " TEXT," +
-                MovieEntry.COLUMN_POSTER_PATH_TEXT + " TEXT" +
+                MovieEntry.COLUMN_POSTER_PATH_TEXT + " TEXT," +
+                MovieEntry.COLUMN_MOVIE_ID_TEXT + " TEXT" +
                 " );";
         db.execSQL(SQL_CREATE_LOCATION_TABLE);
     }

@@ -32,6 +32,4 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
     public void deliverResult(List<Movie> data) {
         super.deliverResult(data);
     }
-
-
 }

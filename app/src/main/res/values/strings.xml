@@ -7,12 +7,12 @@
     <string name="no_movies_available">No movies available :(</string>
     <string name="star_image" translatable="false">star_image</string>
     <string name="_0" translatable="false">0</string>
-    <string name="movie_image">movie_image</string>
+    <string name="movie_image" translatable="false">movie_image</string>
     <string name="comingSoon">COMING SOON</string>
     <string name="inCinemas">IN CINEMAS</string>
     <string name="movie_database">MOVIE DATABASE</string>
     <string name="discover">DISCOVER</string>
     <string name="favorites">FAVORITES</string>
-    <string name="content_authority">cz.muni.fi.pv256.movio2.uco_396496.myapplication</string>
-    <string name="sync_account_type">account.com</string>
+    <string name="content_authority" translatable="false">cz.muni.fi.pv256.movio2.uco_396496.myapplication</string>
+    <string name="sync_account_type" translatable="false">account.com</string>
 </resources>
