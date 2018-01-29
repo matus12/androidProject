@@ -36,14 +36,16 @@ public class DownloadService extends IntentService {
     private List<RequestCreator> mRequestCreators;
     private String fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
     private Calendar calendar;
+    private NotificationManager mNotificationManager;
+    private Date mCurrentTime;
 
     public DownloadService() {
         super("DownloadService");
         mContext = this;
         mRequestCreators = new ArrayList<>();
-        Date currentTime = Calendar.getInstance().getTime();
+        mCurrentTime = Calendar.getInstance().getTime();
         calendar = Calendar.getInstance();
-        calendar.setTime(currentTime);
+        calendar.setTime(mCurrentTime);
         fromYear = Integer.toString(calendar.get(Calendar.YEAR));
         fromMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
         fromDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
@@ -53,11 +55,13 @@ public class DownloadService extends IntentService {
         toDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private MoviesList list;
+    private MoviesList comingSoonMovies;
+    private MoviesList inCinemasMovies;
 
     interface Download {
         @GET
         Call<MoviesList> getMovies(@Url String url);
+
         @GET
         Call<MoviesList> getInCinemas(@Url String url);
     }
@@ -95,28 +99,45 @@ public class DownloadService extends IntentService {
                 .setContentIntent(pIntent)
                 .setAutoCancel(false).build();
 
-        final NotificationManager notificationManager =
+        mNotificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0, n);
+        mNotificationManager.notify(0, n);
 
-        String url = getUrl(
+        Call<MoviesList> call = service.getMovies(getUrl(
                 fromYear,
                 fromMonth,
                 fromDay,
                 toYear,
                 toMonth,
                 toDay
-        );
+        ));
+        
+        calendar.setTime(mCurrentTime);
+        toYear = Integer.toString(calendar.get(Calendar.YEAR));
+        toMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
+        toDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+        calendar.add(Calendar.DAY_OF_MONTH, -21);
+        fromYear = Integer.toString(calendar.get(Calendar.YEAR));
+        fromMonth = Integer.toString(calendar.get(Calendar.MONTH) + 1);
+        fromDay = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
 
-        Call<MoviesList> call = service.getMovies(url);
-        Callback<MoviesList> callback = new Callback<MoviesList>() {
+        final Call<MoviesList> call2 = service.getInCinemas(getUrl(
+                fromYear,
+                fromMonth,
+                fromDay,
+                toYear,
+                toMonth,
+                toDay
+        ));
+
+        final Callback<MoviesList> callback2 = new Callback<MoviesList>() {
             @Override
             public void onResponse(@NonNull Call<MoviesList> call, @NonNull Response<MoviesList> response) {
-                list = response.body();
-                for(int i = 0; i < list.getResults().size(); i++){
+                inCinemasMovies = response.body();
+                for (int i = 0; i < inCinemasMovies.getResults().size(); i++) {
                     mRequestCreators.add(Picasso.with(mContext)
                             .load("https://image.tmdb.org/t/p/w500/"
-                                    + list.getResults().get(i).getPoster_path()));
+                                    + inCinemasMovies.getResults().get(i).getPoster_path()));
                 }
 
                 Data.getInstance().setData(mRequestCreators);
@@ -124,12 +145,7 @@ public class DownloadService extends IntentService {
                         .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
                                 "movie-poster-coming-soon_2_orig.png"));
 
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(MainActivity.ResponseReceiver.ACTION_RESP);
-                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                broadcastIntent.putExtra("movies", list);
-                notificationManager.cancel(0);
-                sendBroadcast(broadcastIntent);
+                sendMovies();
             }
 
             @Override
@@ -137,17 +153,51 @@ public class DownloadService extends IntentService {
                 Log.d("APP", "FAIL");
             }
         };
+
+        Callback<MoviesList> callback = new Callback<MoviesList>() {
+            @Override
+            public void onResponse(@NonNull Call<MoviesList> call, @NonNull Response<MoviesList> response) {
+                comingSoonMovies = response.body();
+                for (int i = 0; i < comingSoonMovies.getResults().size(); i++) {
+                    mRequestCreators.add(Picasso.with(mContext)
+                            .load("https://image.tmdb.org/t/p/w500/"
+                                    + comingSoonMovies.getResults().get(i).getPoster_path()));
+                }
+
+                Data.getInstance().setData(mRequestCreators);
+                Data.getInstance().setDefaultCreator(Picasso.with(mContext)
+                        .load("http://www.christophergrantharvey.com/uploads/4/3/2/3/4323645/" +
+                                "movie-poster-coming-soon_2_orig.png"));
+                call2.enqueue(callback2);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MoviesList> call, @NonNull Throwable t) {
+                Log.d("APP", "FAIL");
+            }
+        };
+
         call.enqueue(callback);
+    }
+
+    private void sendMovies() {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(MainActivity.ResponseReceiver.ACTION_RESP);
+        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        broadcastIntent.putExtra("comingSoon", comingSoonMovies);
+        broadcastIntent.putExtra("inCinemas", inCinemasMovies);
+        mNotificationManager.cancel(0);
+        sendBroadcast(broadcastIntent);
     }
 
     @NonNull
     private String getUrl(String fromYear, String fromMonth, String fromDay, String toYear, String toMonth, String toDay) {
         return "https://api.themoviedb.org/3/discover/movie?primary_release_date.gte="
-                    + fromYear + "-" + fromMonth + "-" + fromDay
-                    + "&primary_release_date.lte="
-                    + toYear + "-" + toMonth + "-" + toDay +
-                    "&sort_by=popularity.desc&with_original_language=en&" +
-                    "api_key=4d1917c52de723c48c649b3eb9955c8f";
+                + fromYear + "-" + fromMonth + "-" + fromDay
+                + "&primary_release_date.lte="
+                + toYear + "-" + toMonth + "-" + toDay +
+                "&sort_by=popularity.desc&with_original_language=en&" +
+                "api_key=4d1917c52de723c48c649b3eb9955c8f";
     }
 
     @Override

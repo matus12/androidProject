@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="movie_image">movie_image</string>
+    <string name="movie_database">FILMOVÁ DATABÁZE</string>
+    <string name="discover">OBJEVIT</string>
+    <string name="favorites">OBLÍBENÉ</string>
+    <string name="inCinemas">V KINECH</string>
+    <string name="comingSoon">BRZO V KINECH</string>
+    <string name="no_movies_available">Nejsou k dispozici žádné filmy</string>
+    <string name="app_name">AndroidApp</string>
 </resources>

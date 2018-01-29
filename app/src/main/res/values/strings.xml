@@ -10,4 +10,7 @@
     <string name="movie_image">movie_image</string>
     <string name="comingSoon">COMING SOON</string>
     <string name="inCinemas">IN CINEMAS</string>
+    <string name="movie_database">MOVIE DATABASE</string>
+    <string name="discover">DISCOVER</string>
+    <string name="favorites">FAVORITES</string>
 </resources>

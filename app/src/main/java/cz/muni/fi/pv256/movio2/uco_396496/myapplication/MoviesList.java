@@ -12,6 +12,10 @@ public class MoviesList implements Parcelable {
         return results;
     }
 
+    public void clearResults() {
+        results.clear();
+    }
+
     public MoviesList(Parcel in) {
         results = in.createTypedArrayList(MovieInfo.CREATOR);
     }
