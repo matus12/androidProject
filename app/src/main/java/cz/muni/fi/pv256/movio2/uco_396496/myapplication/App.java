@@ -4,10 +4,6 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
-/**
- * Created by matus on 10/4/2017.
- */
-
 public class App extends Application {
     @Override
     public void onCreate() {
