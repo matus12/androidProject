@@ -1,8 +1,21 @@
+def VERSION_MAJOR = 0
+def VERSION_MINOR = 1
+def VERSION_PATCH = 0
+def VERSION_BUILD = 0
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
     defaultConfig {
         applicationId "cz.muni.fi.pv256.movio2.uco_396496"
         minSdkVersion 17
@@ -10,12 +23,43 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionName "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+        resConfigs "sk", "en"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            applicationIdSuffix '.debug'
+            debuggable true
+        }
+    }
+    applicationVariants.all { variant ->
+        def flavor = variant.mergedFlavor
+        if (variant.buildType.isDebuggable()) {
+            //set properties for debug
+            flavor.versionName = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_BUILD}-${versionCode}";
+        } else {
+            //set properties for release
+            flavor.versionName = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}";
+        }
+    }
+    productFlavors {
+        flavor1 {
+            def logging = true;
+        }
+        flavor2 {
+            def logging = false;
+        }
+    }
+    sourceSets.flavor1{
+        res.srcDirs = ['res', 'theme1']
+    }
+    sourceSets.flavor2{
+        res.srcDirs = ['res', 'theme2']
     }
 }
 
@@ -24,7 +68,13 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support:appcompat-v7:26.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:26.0.0'
+    compile 'com.android.support:recyclerview-v7:26.0.0'
+    compile 'com.android.support:cardview-v7:26.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
