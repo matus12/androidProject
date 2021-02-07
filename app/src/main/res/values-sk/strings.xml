@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AndroidApp</string>
+    <string name="hello_blank_fragment">Ahoj prazdny fragment</string>
+    <string name="no_movies_available">Nie su k dispozicii ziadne filmy</string>
+</resources>
